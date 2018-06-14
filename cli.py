@@ -19,14 +19,12 @@ def plugins_command(status, context):
     click.echo(response)
 
 def plugins(status, context):
-    command = ['wp', 'plugin', 'list', '--skip-themes']
+    command = ['wp', 'plugin', 'list', '--skip-themes', '--format=json']
 
     if status in ('active', 'inactive'):
         command.append(f'--status={status}')
     else: 
         command.append(f'--status=active')
-
-    command.append(f'--format=json')
 
     response = execute_bundle(command)
 
@@ -48,12 +46,13 @@ def parse_common_plugins(plugins_by_host):
             else:
                 plugins_dict[ plugins_list[x]['name'] ] += 1
 
-    response = [ plugin for plugin, quantity 
+    response = {}
+    response['plugins'] = [ {'name': plugin} for plugin, quantity 
                  in plugins_dict.items()
                  if quantity == hosts_quantity
                ]
     
-    return response
+    return json.dumps(response)
 
 def execute_bundle(command):
     root_dir = settings.get('path')
