@@ -1,8 +1,11 @@
 [default]
 path = "/var/www/vhosts/"
+hostname = "local"
 
 [development]
 path = "/srv/"
+hostname = "local"
 
 [production]
 path = "/var/www/vhosts/"
+hostname = "aph01"
