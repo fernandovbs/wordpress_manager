@@ -2,8 +2,18 @@
 import os
 import json
 import click
+import pyrebase
 from subprocess import run, PIPE
 from dynaconf import settings
+
+config = {
+  "apiKey": settings.PYREBASE.apiKey,
+  "authDomain": settings.PYREBASE.authDomain,
+  "databaseURL": settings.PYREBASE.databaseURL,
+  "storageBucket": settings.PYREBASE.storageBucket
+}
+
+firebase = pyrebase.initialize_app(config)
 
 @click.group()
 def cli():
@@ -31,7 +41,11 @@ def plugins(status, context):
     if context == 'global':
         response = parse_common_plugins(response)
 
-    return response
+    host = settings.HOSTNAME
+    response_payload = {}
+    response_payload[host] = response
+
+    return json.dumps(response_payload)
 
 def parse_common_plugins(plugins_by_host):
     hosts_quantity = len(plugins_by_host)
@@ -52,10 +66,10 @@ def parse_common_plugins(plugins_by_host):
                  if quantity == hosts_quantity
                ]
     
-    return json.dumps(response)
+    return response
 
 def execute_bundle(command):
-    root_dir = settings.get('path')
+    root_dir = settings.PATH
     response = {}
 
     for sub_dir in os.listdir(root_dir):
@@ -64,7 +78,7 @@ def execute_bundle(command):
         if wp_cli_exists(path):
             p = run(command, cwd=path,stdout=PIPE)
             if p.stdout:
-                response[sub_dir] = p.stdout
+                response[sub_dir] = p.stdout.decode()
 
     return response
 
