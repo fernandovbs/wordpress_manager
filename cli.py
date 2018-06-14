@@ -14,13 +14,11 @@ def cli():
 @cli.command('plugins')
 @click.argument('status')
 @click.option('--context', '-c')
-@click.option('--format', '-f')
-def plugins_command(status, format, context):
-    response = plugins(status, format, context)
+def plugins_command(status, context):
+    response = plugins(status, context)
     click.echo(response)
 
-
-def plugins(status, format, context):
+def plugins(status, context):
     command = ['wp', 'plugin', 'list', '--skip-themes']
 
     if status in ('active', 'inactive'):
@@ -31,9 +29,6 @@ def plugins(status, format, context):
     command.append(f'--format=json')
 
     response = execute_bundle(command)
-
-#    if format in ('table', 'csv', 'count', 'json', 'yaml'):
-#        command.append(f'--format={format}')
 
     if context == 'global':
         response = parse_common_plugins(response)
