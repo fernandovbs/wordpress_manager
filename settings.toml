@@ -1,0 +1,8 @@
+[default]
+path = "/var/www/vhosts/"
+
+[development]
+path = "/srv/"
+
+[production]
+path = "/var/www/vhosts/"
