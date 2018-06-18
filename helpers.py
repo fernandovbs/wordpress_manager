@@ -1,6 +1,17 @@
 import os
+import pyrebase
 from subprocess import run, PIPE
 from dynaconf import settings
+
+firebase_config = {
+  "apiKey": settings.PYREBASE.apiKey,
+  "authDomain": settings.PYREBASE.authDomain,
+  "databaseURL": settings.PYREBASE.databaseURL,
+  "storageBucket": settings.PYREBASE.storageBucket
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+db = firebase.database()
 
 def execute_bundle(command):
     root_dir = settings.PATH
