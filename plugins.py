@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-import os
 import json
 import click
-from subprocess import run, PIPE
 from dynaconf import settings
 from helpers import execute_bundle, wp_cli_exists
 
