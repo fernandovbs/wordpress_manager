@@ -61,6 +61,7 @@ def execute_by_status(command):
 
 def response_bundle(response):
     response_bundle = {}
+    active_bundle, inactive_bundle = (False, False)
 
     if response['active']:
         active_bundle = response['active'].popitem()
