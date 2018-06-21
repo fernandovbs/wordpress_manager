@@ -24,7 +24,7 @@ def execute_bundle(command, base=''):
         path = os.path.abspath(os.path.join(root_dir,sub_dir, vhost_base))
 
         if os.path.isdir(path) and wp_cli_exists(path):
-            click.echo(f'Scanning {sub_dir} virtualhost now...')
+            click.echo(f"Scanning {sub_dir} virtualhost now...")
             p = run(command, cwd=path, stdout=PIPE)
             if p.stdout:
                 click.echo('Done!')
