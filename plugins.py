@@ -83,14 +83,17 @@ def parse_common_plugins(bundle):
 
         for status, plugins in plugins_by_status.items():
             for x in range(len(plugins)):
-                if plugins[x]['name'] not in plugins_dict:
-                    plugins_dict[ plugins[x]['name'] ] = {}
-                    if status not in plugins_dict[ plugins[x]['name'] ]:
-                        plugins_dict[ plugins[x]['name'] ][status] = 1
-                        plugins_dict[ plugins[x]['name'] ]['hosts'] = [{'nome': host, 'versão': plugins[x]['version']}]
+                plugin_name = plugins[x]['name']
+                plugin_name = plugin_name.replace(' ', '_').replace('.', '_')
+
+                if plugin_name not in plugins_dict:
+                    plugins_dict[ plugin_name ] = {}
+                    if status not in plugins_dict[ plugin_name ]:
+                        plugins_dict[ plugin_name ][status] = 1
+                        plugins_dict[ plugin_name ]['hosts'] = [{'nome': host, 'versão': plugins[x]['version']}]
                     else:
-                        plugins_dict[ plugins[x]['name'] ][status] += 1
-                        plugins_dict[ plugins[x]['name'] ]['hosts'].append({'nome': host, 'versão': plugins[x]['version']})
+                        plugins_dict[ plugin_name ][status] += 1
+                        plugins_dict[ plugin_name ]['hosts'].append({'nome': host, 'versão': plugins[x]['version']})
                     
 #                response[status] = [{'name': plugin} for plugin, quantity in plugins_dict.items()
 #                                   if quantity == hosts_quantity]
