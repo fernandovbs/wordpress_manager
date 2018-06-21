@@ -51,16 +51,28 @@ def plugins(status, context):
 
 def execute_by_status(command):
     response = {}
-    response_bundle = {}
 
     for status in ('active', 'inactive'):
         command.append(f'--status={status}')
         response[status] = helpers.execute_bundle(command, status)
-    
-    active_bundle = response['active'].popitem()
-    inactive_bundle = response['inactive'].popitem()
-    
-    response_bundle[active_bundle[0]] = {**active_bundle[1], **inactive_bundle[1]}
+
+    return response_bundle(response)
+
+
+def response_bundle(response):
+    response_bundle = {}
+
+    if response['active']:
+        active_bundle = response['active'].popitem()
+    if response['inactive']:
+        inactive_bundle = response['inactive'].popitem()
+        
+    if active_bundle and inactive_bundle:
+        response_bundle[active_bundle[0]] = {**active_bundle[1], **inactive_bundle[1]}
+    elif active_bundle:
+        response_bundle[active_bundle[0]] = active_bundle[1]
+    elif inactive_bundle:
+        response_bundle[inactive_bundle[0]] = inactive_bundle[1]       
 
     return response_bundle
 
