@@ -1,0 +1,11 @@
+[default]
+path = "/var/www/vhosts/"
+vhost_base = "httpdocs"
+hostname = "localhost"
+
+[development]
+path = "/var/www/vhosts/"
+vhost_base = "httpdocs"
+hostname = "localhost"
+
+[production]
