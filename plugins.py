@@ -1,7 +1,7 @@
 import json
 import click
+import helpers
 from dynaconf import settings
-from helpers import execute_bundle, wp_cli_exists
 
 ''' Plugins list command'''
 @click.command('plugins')
@@ -9,47 +9,77 @@ from helpers import execute_bundle, wp_cli_exists
 @click.option('--context', '-c')
 def plugins_command(status, context):
     response = plugins(status, context)
-    click.echo(response)
+
+    if context == 'global':
+        click.echo('Global context!')        
+        click.echo('Exporting to firebase...')
+
+        data = helpers.db.child('data').get().val()
+
+        if data and settings.HOSTNAME in data:
+            click.echo(f'Updating {settings.HOSTNAME} information...')
+            if helpers.update_dataset(response):
+                click.echo('Export complete!')
+            else:
+                click.echo('Something goes wrong when exporting!')
+        else:
+            click.echo(f'Generating {settings.HOSTNAME} information...')
+            if helpers.create_dataset(response):
+                click.echo('Export complete!')
+            else:
+                click.echo('Something goes wrong when exporting!')
+    else:
+        click.echo(json.dumps(response))
+
 
 def plugins(status, context):
     command = ['wp', 'plugin', 'list', '--skip-themes', '--format=json']
-    host = settings.HOSTNAME
     response_payload = {}
-    response_payload[host] = {}
 
     if status in ('active', 'inactive') and not context:
         command.append(f'--status={status}')
-        response = execute_bundle(command)
-        response_payload[host][status] = response
+        response = helpers.execute_bundle(command)
+        response_payload[status] = response
     elif context == 'global': 
-        for status in ('active', 'inactive'):
-            command.append(f'--status={status}')
-            response = execute_bundle(command)
-            response_payload[host][status] = response
-        response_payload[host]['global'] = parse_common_plugins(response_payload[host])
+        response_payload['plugins'] = execute_by_status(command)
+        response_payload['plugins']['global'] = parse_common_plugins(response_payload['plugins'])
     else:
         response_payload = {'error': 'Check the parameters and try again'}        
 
-    return json.dumps(response_payload)
+    return response_payload
 
-def parse_common_plugins(plugins_by_status):
+
+def execute_by_status(command):
+    response = {}
+    response_bundle = {}
+
+    for status in ('active', 'inactive'):
+        command.append(f'--status={status}')
+        response[status] = helpers.execute_bundle(command, status)
+    
+    active_bundle = response['active'].popitem()
+    inactive_bundle = response['inactive'].popitem()
+    
+    response_bundle[active_bundle[0]] = {**active_bundle[1], **inactive_bundle[1]}
+
+    return response_bundle
+
+def parse_common_plugins(bundle):
     response = {}
 
-    for status, plugins_by_host in plugins_by_status.items():
-        hosts_quantity = len(plugins_by_host)
-        plugins_dict = {}
+    for host, plugins_by_status in bundle.items():
+        hosts_quantity = len(bundle)
 
-        for host, plugins in plugins_by_host.items():
-            plugins_list = json.loads(plugins)
-            for x in range(len(plugins_list)):            
-                if plugins_list[x]['name'] not in plugins_dict:
-                    plugins_dict[ plugins_list[x]['name'] ] = 1
+        for status, plugins in plugins_by_status.items():
+            plugins_dict = {}
+
+            for x in range(len(plugins)):
+                if plugins[x]['name'] not in plugins_dict:
+                    plugins_dict[ plugins[x]['name'] ] = 1
                 else:
-                    plugins_dict[ plugins_list[x]['name'] ] += 1
+                    plugins_dict[ plugins[x]['name'] ] += 1
                     
-        response[status] = [ {'name': plugin} for plugin, quantity 
-                    in plugins_dict.items()
-                    if quantity == hosts_quantity
-                ]
+            response[status] = [{'name': plugin} for plugin, quantity in plugins_dict.items()
+                                if quantity == hosts_quantity]
     
     return response
