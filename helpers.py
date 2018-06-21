@@ -28,10 +28,11 @@ def execute_bundle(command, base=''):
             p = run(command, cwd=path, stdout=PIPE)
             if p.stdout:
                 click.echo('Done!')
+                vhost = sub_dir.replace('.', '_').replace('-', '_')
                 if base:
-                    response[sub_dir.replace('.', '_')] = {base: json.loads(p.stdout.decode())}
+                    response[vhost] = {base: json.loads(p.stdout.decode())}
                 else:
-                    response[sub_dir.replace('.', '_')] = json.loads(p.stdout.decode())
+                    response[vhost] = json.loads(p.stdout.decode())
 
     return response
 
