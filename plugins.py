@@ -76,21 +76,23 @@ def response_bundle(response):
     return response_bundle
 
 def parse_common_plugins(bundle):
-    response = {}
+    plugins_dict = {}
 
     for host, plugins_by_status in bundle.items():
-        hosts_quantity = len(bundle)
+#        hosts_quantity = len(bundle)
 
         for status, plugins in plugins_by_status.items():
-            plugins_dict = {}
-
             for x in range(len(plugins)):
                 if plugins[x]['name'] not in plugins_dict:
-                    plugins_dict[ plugins[x]['name'] ] = 1
-                else:
-                    plugins_dict[ plugins[x]['name'] ] += 1
+                    plugins_dict[ plugins[x]['name'] ] = {}
+                    if status not in plugins_dict[ plugins[x]['name'] ]:
+                        plugins_dict[ plugins[x]['name'] ][status] = 1
+                        plugins_dict[ plugins[x]['name'] ]['hosts'] = [{'nome': host, 'versão': plugins[x]['version']}]
+                    else:
+                        plugins_dict[ plugins[x]['name'] ][status] += 1
+                        plugins_dict[ plugins[x]['name'] ]['hosts'].append({'nome': host, 'versão': plugins[x]['version']})
                     
-            response[status] = [{'name': plugin} for plugin, quantity in plugins_dict.items()
-                                if quantity == hosts_quantity]
+#                response[status] = [{'name': plugin} for plugin, quantity in plugins_dict.items()
+#                                   if quantity == hosts_quantity]
     
-    return response
+    return plugins_dict
