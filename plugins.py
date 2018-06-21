@@ -62,18 +62,16 @@ def execute_by_status(command):
 def response_bundle(response):
     response_bundle = {}
     active_bundle, inactive_bundle = (False, False)
-
-    if response['active']:
-        active_bundle = response['active'].popitem()
-    if response['inactive']:
-        inactive_bundle = response['inactive'].popitem()
         
-    if active_bundle and inactive_bundle:
-        response_bundle[active_bundle[0]] = {**active_bundle[1], **inactive_bundle[1]}
-    elif active_bundle:
-        response_bundle[active_bundle[0]] = active_bundle[1]
-    elif inactive_bundle:
-        response_bundle[inactive_bundle[0]] = inactive_bundle[1]       
+    for key, items in response['active'].items():
+        if key not in response_bundle:
+            response_bundle[key] = {}
+        response_bundle[key]['active'] = items['active']
+
+    for key, items in response['inactive'].items():
+        if key not in response_bundle:
+            response_bundle[key] = {}
+        response_bundle[key]['inactive'] = items['inactive']
 
     return response_bundle
 
