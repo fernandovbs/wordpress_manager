@@ -79,24 +79,18 @@ def parse_common_plugins(bundle):
     plugins_dict = {}
 
     for host, plugins_by_status in bundle.items():
-#        hosts_quantity = len(bundle)
 
         for status, plugins in plugins_by_status.items():
             for x in range(len(plugins)):
-                plugin_name = plugins[x]['name']
-
-                plugin_name = helpers.sanitize_keys(plugin_name)
+                plugin_name = helpers.sanitize_keys( plugins[x]['name'] )
 
                 if plugin_name not in plugins_dict:
-                    plugins_dict[ plugin_name ] = {}
-                    if status not in plugins_dict[ plugin_name ]:
-                        plugins_dict[ plugin_name ][status] = 1
-                        plugins_dict[ plugin_name ]['hosts'] = [{'nome': host, 'versão': plugins[x]['version']}]
-                    else:
-                        plugins_dict[ plugin_name ][status] += 1
-                        plugins_dict[ plugin_name ]['hosts'].append({'nome': host, 'versão': plugins[x]['version']})
-                    
-#                response[status] = [{'name': plugin} for plugin, quantity in plugins_dict.items()
-#                                   if quantity == hosts_quantity]
-    
+                    plugins_dict[ plugin_name ] = {
+                        'active': {'quantidade': 0, 'hosts':[]}, 
+                        'inactive': {'quantidade': 0, 'hosts':[]},
+                    }
+
+                plugins_dict[ plugin_name ][status]['quantidade'] += 1
+                plugins_dict[ plugin_name ][status]['hosts'].append({'nome': host, 'versão': plugins[x]['version']})
+                        
     return plugins_dict
