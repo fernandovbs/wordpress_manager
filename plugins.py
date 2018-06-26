@@ -84,7 +84,8 @@ def parse_common_plugins(bundle):
         for status, plugins in plugins_by_status.items():
             for x in range(len(plugins)):
                 plugin_name = plugins[x]['name']
-                plugin_name = plugin_name.replace(' ', '_').replace('.', '_')
+
+                plugin_name = helpers.sanitize_keys(plugin_name)
 
                 if plugin_name not in plugins_dict:
                     plugins_dict[ plugin_name ] = {}

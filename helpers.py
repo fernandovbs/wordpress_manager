@@ -28,7 +28,7 @@ def execute_bundle(command, base=''):
             p = run(command, cwd=path, stdout=PIPE)
             if p.stdout:
                 click.echo('Done!')
-                vhost = sub_dir.replace('.', '_').replace('-', '_')
+                vhost = sanitize_keys(sub_dir)
                 if base:
                     response[vhost] = {base: json.loads(p.stdout.decode())}
                 else:
@@ -59,3 +59,6 @@ def create_dataset(response):
         return True
 
     return False
+
+def sanitize_keys(string):
+    return ''.join([i if ord(i) < 128 else '_' for i in string])
