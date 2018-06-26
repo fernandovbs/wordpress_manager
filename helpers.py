@@ -46,8 +46,8 @@ def wp_cli_exists(path):
 
         if p.stdout:
             try:
-                if json.loads(p.stdout.decode()):
-                    return True
+                json.loads(p.stdout.decode())
+                return True
             except:
                 return False
     except:
