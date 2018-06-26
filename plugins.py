@@ -61,7 +61,6 @@ def execute_by_status(command):
 
 def response_bundle(response):
     response_bundle = {}
-    active_bundle, inactive_bundle = (False, False)
         
     for key, items in response['active'].items():
         if key not in response_bundle:
