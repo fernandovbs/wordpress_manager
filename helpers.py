@@ -45,11 +45,8 @@ def wp_cli_exists(path):
         p = run(['wp', 'core', 'is-installed'], cwd=path, stdout=PIPE, stderr=PIPE)
 
         if p.stdout:
-            try:
-                json.loads(p.stdout.decode())
-                return True
-            except:
-                return False
+            if 'Error' not in p.stdout:
+               return True
     except:
         return False
 
