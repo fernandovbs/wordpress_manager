@@ -80,7 +80,7 @@ def type_of_application(path):
         if 'legba3' in remote_url: 
             return 'legba3'
         else:
-            repo = re.split("[/.-_:", remote_url)
+            repo = re.split("[/.-_:]+", remote_url)
             return repo[-2] if len(repo) > 1 else False 
             
     return False
