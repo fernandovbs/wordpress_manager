@@ -74,7 +74,7 @@ def type_of_application(path):
     if p.stderr:
         return False
     
-    if p.stdout:
+    if p.stdout.decode():
         if 'legba4' in p.stdout.decode():
             return 'legba4'
         if 'legba3' in p.stdout.decode(): 
