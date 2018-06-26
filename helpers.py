@@ -73,14 +73,14 @@ def type_of_application(path):
 
     if p.stderr:
         return False
-    
-    if p.stdout.decode():
-        if 'legba4' in p.stdout.decode():
+    remote_url = p.stdout.decode()
+    if remote_url:
+        if 'legba4' in remote_url:
             return 'legba4'
-        if 'legba3' in p.stdout.decode(): 
+        if 'legba3' in remote_url: 
             return 'legba3'
         else:
-            repo = re.split("[/.-_:", p.stdout.decode())
+            repo = re.split("[/.-_:", remote_url)
             return repo[-2] if len(repo) > 1 else False 
             
     return False
