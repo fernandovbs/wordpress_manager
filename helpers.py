@@ -49,7 +49,7 @@ def wp_cli_exists(path):
     except:
         return False
 
-    return False
+    return True
 
 def update_dataset(response):
     if db.child('data').child(settings.HOSTNAME).update(response):
