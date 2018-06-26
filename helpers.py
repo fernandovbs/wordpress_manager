@@ -42,15 +42,18 @@ def execute_bundle(command, base=''):
 
 def wp_cli_exists(path):
     try:
-        p = run(['wp', 'core', 'is-installed'], cwd=path, stderr=PIPE)
-    except FileNotFoundError:
+        p = run(['wp', 'core', 'is-installed'], cwd=path, stdout=PIPE, stderr=PIPE)
+
+        if p.stdout:
+            try:
+                if json.loads(p.stdout.decode()):
+                    return True
+            except:
+                return False
+    except:
         return False
 
-    if p.stderr:
-        return False
-
-    return True
-
+    return False
 
 def update_dataset(response):
     if db.child('data').child(settings.HOSTNAME).update(response):

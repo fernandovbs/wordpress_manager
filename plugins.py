@@ -11,23 +11,26 @@ def plugins_command(status, context):
     response = plugins(status, context)
 
     if context == 'global':
-        click.echo('Global context!')        
-        click.echo('Exporting to firebase...')
+        if response['plugins']['global']:
+            click.echo('Global context!')        
+            click.echo('Exporting to firebase...')
 
-        data = helpers.db.child('data').get().val()
+            data = helpers.db.child('data').get().val()
 
-        if data and settings.HOSTNAME in data:
-            click.echo(f'Updating {settings.HOSTNAME} information...')
-            if helpers.update_dataset(response):
-                click.echo('Export complete!')
+            if data and settings.HOSTNAME in data:
+                click.echo(f'Updating {settings.HOSTNAME} information...')
+                if helpers.update_dataset(response):
+                    click.echo('Export complete!')
+                else:
+                    click.echo('Something goes wrong when exporting!')
             else:
-                click.echo('Something goes wrong when exporting!')
+                click.echo(f'Generating {settings.HOSTNAME} information...')
+                if helpers.create_dataset(response):
+                    click.echo('Export complete!')
+                else:
+                    click.echo('Something goes wrong when exporting!')
         else:
-            click.echo(f'Generating {settings.HOSTNAME} information...')
-            if helpers.create_dataset(response):
-                click.echo('Export complete!')
-            else:
-                click.echo('Something goes wrong when exporting!')
+            click.echo('Nothing to export')
     else:
         click.echo(json.dumps(response))
 
