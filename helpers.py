@@ -2,6 +2,7 @@ import os
 import json
 import pyrebase
 import click
+import string
 from subprocess import run, PIPE
 from dynaconf import settings
 
@@ -60,5 +61,6 @@ def create_dataset(response):
 
     return False
 
-def sanitize_keys(string):
-    return ''.join([i if ord(i) < 128 else '_' for i in string])
+def sanitize_keys(string_key):
+    letters = string.ascii_letters
+    return ''.join([i if i in letters else '_' for i in string_key])
