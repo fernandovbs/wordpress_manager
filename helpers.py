@@ -75,12 +75,12 @@ def type_of_application(path):
         return False
     
     if p.stdout:
-        if 'legba4' in p.stdout:
+        if 'legba4' in p.stdout.decode():
             return 'legba4'
-        if 'legba3' in p.stdout: 
+        if 'legba3' in p.stdout.decode(): 
             return 'legba3'
         else:
-            repo = re.split("[/.-_:", p.stdout)
+            repo = re.split("[/.-_:", p.stdout.decode())
             return repo[-2] if len(repo) > 1 else False 
             
     return False
