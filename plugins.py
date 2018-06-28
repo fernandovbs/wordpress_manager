@@ -44,8 +44,8 @@ def plugins(status, context):
         response = helpers.execute_bundle(command)
         response_payload[status] = response
     elif context == 'global': 
-        response_payload['plugins'] = execute_by_status(command)
-        response_payload['plugins']['global'] = parse_common_plugins(response_payload['plugins'])
+        response_payload['plugins'] = {}
+        response_payload['plugins']['global'] = parse_common_plugins(execute_by_status(command))
     else:
         response_payload = {'error': 'Check the parameters and try again'}        
 
