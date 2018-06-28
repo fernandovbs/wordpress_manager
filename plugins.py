@@ -15,9 +15,9 @@ def plugins_command(status, context):
             click.echo('Global context!')        
             click.echo('Exporting to firebase...')
 
-            data = helpers.db.child('data').get().val()
+            data = helpers.db.child('data').child(settings.HOSTNAME).shallow().get()
 
-            if data and settings.HOSTNAME in data:
+            if data:
                 click.echo(f'Updating {settings.HOSTNAME} information...')
                 if helpers.update_dataset(response):
                     click.echo('Export complete!')
