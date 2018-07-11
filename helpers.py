@@ -33,10 +33,17 @@ def execute_bundle(command, base=''):
                 if p.stdout:
                     click.echo('Done!')
                     vhost = sanitize_keys(sub_dir)
-                    if base:
-                        response[vhost] = {base: json.loads(p.stdout.decode())}
-                    else:
-                        response[vhost] = json.loads(p.stdout.decode())
+                    try:
+                        if base:
+                            response[vhost] = {base: json.loads(p.stdout.decode())}
+                        else:
+                            response[vhost] = json.loads(p.stdout.decode())
+                    except:
+                        if base:
+                            response[vhost] = {base: 'erro'}
+                        else:
+                            response[vhost] = 'erro'                        
+
 
     return response
 
